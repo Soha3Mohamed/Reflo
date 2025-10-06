@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace RosylnHello.Rules
 {
-    internal class InternalToPublicRule : IRefactorRule
+    internal class InternalToPublicClassRule : IRefactorRule
     {
         public string Description => "Convert internal classes to public";
 
@@ -26,7 +26,7 @@ namespace RosylnHello.Rules
                     var newModifiers = SyntaxFactory.TokenList(
                         cls.Modifiers.Select(m =>
                             m.IsKind(SyntaxKind.InternalKeyword)
-                                ? SyntaxFactory.Token(SyntaxKind.PublicKeyword)
+                                ? SyntaxFactory.Token(SyntaxKind.PublicKeyword).WithTrailingTrivia(SyntaxFactory.Space)
                                 : m)
                     );
 

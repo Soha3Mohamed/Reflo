@@ -10,116 +10,6 @@ namespace RosylnHello
     {
         static void Main(string[] args)
         {
-            #region Parse a string of c# code to tree of nodes and printing it
-            //    Console.WriteLine("Hello, World!");
-            //    // 1) Some sample C# code as text
-            //    string code = @"
-            //public class Person 
-            //{
-            //    public string Name;
-            //    public void SayHello() 
-            //    {
-            //        Console.WriteLine(""Hello "" + Name);
-            //    }
-            //}";
-
-            //    // 2) Parse the code into a SyntaxTree
-            //    SyntaxTree tree = CSharpSyntaxTree.ParseText(code);
-
-            //    // 3) Get the root node (the top of the tree)
-            //    SyntaxNode root = tree.GetRoot();
-
-            //    // 4) Print the syntax tree
-            //    Console.WriteLine(root.ToFullString());
-
-            //    // Extra: Print the structure (tree format)
-            //    Console.WriteLine("\n--- Tree Structure ---");
-            //    Console.WriteLine(root);
-            //    foreach (var node in root.DescendantNodes())
-            //    {
-            //        Console.WriteLine($"{node.Kind()} --> {node}");
-            //    }
-
-            #endregion
-
-            #region Filtering the tree and focusing on classes only and printing its names and modifiers
-
-            //    string code = @"
-            //public class Person 
-            //{
-            //    public string Name;
-            //    public void SayHello() 
-            //    {
-            //        Console.WriteLine(""Hello "" + Name);
-            //    }
-            //}
-
-            //internal class Car
-            //{
-            //    public string Model;
-            //}";
-
-            //    // Parse the code into a tree
-            //    SyntaxTree tree = CSharpSyntaxTree.ParseText(code);
-
-            //    // Get the root node
-            //    var root = tree.GetRoot();
-
-            //    // Step 1: Find only the class declarations
-            //    var classes = root.DescendantNodes().OfType<ClassDeclarationSyntax>();
-
-            //    Console.WriteLine("Classes I found:");
-            //    foreach (var cls in classes)
-            //    {
-            //        Console.WriteLine($"- {cls.Identifier.Text} (modifier: {string.Join(", ", cls.Modifiers)})");
-            //    }
-
-            #endregion
-
-            //till now i was parsing pre-written string that is a c# code but the next region is parsing a real .cs file
-
-            #region Parsing a Real .cs file
-
-            //var filePath = @"C:\Users\soha mohamed\source\repos\RosylnHello\RosylnHello\Employee.cs";
-            //var codeInFile = File.ReadAllText(filePath);
-
-            //SyntaxTree tree = CSharpSyntaxTree.ParseText(codeInFile);
-
-            //var root = tree.GetRoot();
-            //var classes = root.DescendantNodes().OfType<ClassDeclarationSyntax>();
-
-            //Console.WriteLine("Classes I found:");
-
-            ////this line filters only the internal classes by checking if any of the modifiers of the class is internal
-            ////iskind is a method that checks if the syntax kind of the modifier is internal keyword
-            //var InternalClasses = classes.Where(c => c.Modifiers.Any(m => m.IsKind(SyntaxKind.InternalKeyword))).ToList();
-            //foreach (var cls in InternalClasses)
-            //{
-
-            //    Console.WriteLine($"- {cls.Identifier.Text} (modifier: {string.Join(", ", cls.Modifiers)})");
-            //}
-
-
-            #endregion
-
-            #region A Whole Solution or Project
-
-            //string projectPath = @"C:\Users\soha mohamed\source\repos\Inventra";
-
-            //foreach (var file in Directory.GetFiles(projectPath, "*.cs", SearchOption.AllDirectories))
-            //{
-            //    string code = File.ReadAllText(file);
-            //    SyntaxTree tree = CSharpSyntaxTree.ParseText(code);
-            //    var root = tree.GetRoot();
-
-            //    var classes = root.DescendantNodes().OfType<ClassDeclarationSyntax>();
-
-            //    foreach (var cls in classes)
-            //    {
-            //        Console.WriteLine($"{Path.GetFileName(file)} -> {cls.Identifier.Text} ({string.Join(", ", cls.Modifiers)})");
-            //    }
-            //}
-            #endregion
 
             #region changing internal to public
             //string projectPath = @"C:\Users\soha mohamed\source\repos\RosylnHello";
@@ -179,24 +69,44 @@ namespace RosylnHello
 
             //Console.WriteLine("\nAll done! 🚀");
             #endregion
+            string confirm;
+            string rangeChoice;
+            string path;
+            string target;
+            string ruleChoice;
+            do
+            {
+                Console.WriteLine("Welcome to The Code Refactor Tool!: Reflo");
+                rangeChoice = AskForRange();
+
+                if (rangeChoice == "1")
+                    Console.Write("Enter file path: ");
+                else
+                    Console.Write("Enter folder path: ");
+                    path = Console.ReadLine();
+
+                   target = AskForTarget();
+                   ruleChoice = AskForRule();
+
+                Console.WriteLine($"\nYou selected:");
+                Console.WriteLine($"📁 Range: {GetRangeName(rangeChoice)}");
+                Console.WriteLine($"🎯 Target: {GetTargetName(target)}");
+                Console.WriteLine($"⚙️ Rule: {GetRuleName(ruleChoice)}");
+
+                Console.Write("\nProceed? (y/n): ");
+                confirm = Console.ReadLine()?.ToLower();
+
+                if (confirm == "n")
+                {
+                    Console.Clear();
+                    Console.WriteLine("Let's try again...\n");
+                }
+
+            } while (confirm != "y");
 
 
-            Console.WriteLine("Welcome to The Code Refactor Tool!: Reflo");
-            string rangeChoice = AskForRange();
 
-            if (rangeChoice == "1") Console.Write("Enter file path: ");
-            else Console.Write("Enter folder path: ");
-            string path = Console.ReadLine();
 
-            string target = AskForTarget();
-            string ruleChoice = AskForRule();
-
-            Console.WriteLine($"\nYou selected:");
-            Console.WriteLine($"📁 Range: {GetRangeName(rangeChoice)}");
-            Console.WriteLine($"🎯 Target: {GetTargetName(target)}");
-            Console.WriteLine($"⚙️ Rule: {GetRuleName(ruleChoice)}");
-            Console.Write("\nProceed? (y/n): ");
-            if (Console.ReadLine()?.ToLower() != "y") return;
 
             // Load rule
             var rule = RuleFactory.GetRule(ruleChoice);
@@ -223,6 +133,7 @@ namespace RosylnHello
         }
 
 
+        #region Get User Input
         public static string AskForRange()
         {
 
@@ -251,7 +162,11 @@ namespace RosylnHello
             Console.WriteLine("[3] Rename Variable Prefix");
             Console.Write("👉 Your choice: ");
             return Console.ReadLine();
-        }
+        } 
+        #endregion
+
+
+        #region Switch User Input
         static string GetRangeName(string choice) => choice switch
         {
             "1" => "Single File",
@@ -276,6 +191,7 @@ namespace RosylnHello
             _ => "Unknown"
         };
 
+        #endregion
 
         public static class RuleFactory
         {
@@ -283,7 +199,7 @@ namespace RosylnHello
             {
                 return choice switch
                 {
-                    "1" => new InternalToPublicRule(),
+                    "1" => new InternalToPublicClassRule(),
                     _ => null
                 };
             }
@@ -323,12 +239,14 @@ namespace RosylnHello
                         if (newRoot != null && !newRoot.IsEquivalentTo(root))
                         {
                             var modifiedPath = Path.Combine(
-                                Path.GetDirectoryName(file),
+                                Path.GetDirectoryName(file)!,
                                 Path.GetFileNameWithoutExtension(file) + "_Modified.cs"
                             );
 
                             File.WriteAllText(modifiedPath, newRoot.ToFullString());
                             Console.WriteLine($"✔ Modified: {Path.GetFileName(modifiedPath)}");
+
+                   
                         }
                     }
                     catch (Exception ex)
