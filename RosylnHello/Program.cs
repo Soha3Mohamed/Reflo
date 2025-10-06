@@ -157,8 +157,8 @@ namespace RosylnHello
         public static string AskForRule()
         {
             Console.WriteLine("\n1️⃣ Choose Range:");
-            Console.WriteLine("[1] Internal → Public");
-            Console.WriteLine("[2] Add Author Comment");
+            Console.WriteLine("[1] Internal → Public (classes)");
+            Console.WriteLine("[2] Internal → Public (methods)");
             Console.WriteLine("[3] Rename Variable Prefix");
             Console.Write("👉 Your choice: ");
             return Console.ReadLine();
@@ -200,6 +200,7 @@ namespace RosylnHello
                 return choice switch
                 {
                     "1" => new InternalToPublicClassRule(),
+                    "2" => new InternalToPublicMethodRule(),
                     _ => null
                 };
             }

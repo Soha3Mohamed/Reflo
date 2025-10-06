@@ -11,7 +11,7 @@ namespace RosylnHello.Test
         public int Id { get; set; }
         public string Name { get; set; }
         
-        public void PrintName()
+        internal void PrintName()
         {
             Console.WriteLine($"Employee name is: {Name}");
         }
