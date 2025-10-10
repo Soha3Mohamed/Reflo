@@ -105,10 +105,16 @@ namespace RosylnHello
             } while (confirm != "y");
 
 
+            // 🌀 If user chose REVERT (option 3)
+            if (ruleChoice == "3")
+            {
+                Console.WriteLine("\n🔄 Reverting all changes from Backup folder...");
+                RefactorEngine.RevertAll(path);
+                Console.WriteLine("✅ Revert complete!");
+                return; // Exit after revert
+            }
 
-
-
-            // Load rule
+            // ⚙️ Normal rule apply mode
             var rule = RuleFactory.GetRule(ruleChoice);
             if (rule == null)
             {
@@ -116,7 +122,6 @@ namespace RosylnHello
                 return;
             }
 
-            // Collect target files
             var files = FileCollector.GetFiles(rangeChoice, path);
             if (!files.Any())
             {
@@ -125,8 +130,6 @@ namespace RosylnHello
             }
 
             Console.WriteLine($"\nFound {files.Count()} file(s). Applying rule...\n");
-
-            // Run the engine
             RefactorEngine.ApplyRule(rule, files);
 
             Console.WriteLine("✅ Refactoring complete!");
@@ -159,7 +162,7 @@ namespace RosylnHello
             Console.WriteLine("\n1️⃣ Choose Range:");
             Console.WriteLine("[1] Internal → Public (classes)");
             Console.WriteLine("[2] Internal → Public (methods)");
-            Console.WriteLine("[3] Rename Variable Prefix");
+            Console.WriteLine("[3] Revert Changes");
             Console.Write("👉 Your choice: ");
             return Console.ReadLine();
         } 
@@ -185,9 +188,9 @@ namespace RosylnHello
 
         static string GetRuleName(string choice) => choice switch
         {
-            "1" => "Internal → Public",
-            "2" => "Add Author Comment",
-            "3" => "Rename Variable Prefix",
+            "1" => "Internal → Public (Classes)",
+            "2" => "Internal → Public (Methods)",
+            "3" => "Revert Changes",
             _ => "Unknown"
         };
 
@@ -201,6 +204,7 @@ namespace RosylnHello
                 {
                     "1" => new InternalToPublicClassRule(),
                     "2" => new InternalToPublicMethodRule(),
+                    "3" => new RevertRule(),
                     _ => null
                 };
             }
@@ -222,41 +226,8 @@ namespace RosylnHello
             }
         }
 
-        public static class RefactorEngine
-        {
-            public static void ApplyRule(IRefactorRule rule, IEnumerable<string> filePaths)
-            {
-                foreach (var file in filePaths)
-                {
-                    try
-                    {
-                        string code = File.ReadAllText(file);
-                        var tree = CSharpSyntaxTree.ParseText(code);
-                        var root = tree.GetRoot();
-
-                        // Apply the rule (returns modified root)
-                        var newRoot = rule.Apply(root);
-
-                        if (newRoot != null && !newRoot.IsEquivalentTo(root))
-                        {
-                            var modifiedPath = Path.Combine(
-                                Path.GetDirectoryName(file)!,
-                                Path.GetFileNameWithoutExtension(file) + "_Modified.cs"
-                            );
-
-                            File.WriteAllText(modifiedPath, newRoot.ToFullString());
-                            Console.WriteLine($"✔ Modified: {Path.GetFileName(modifiedPath)}");
-
-                   
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"❌ Error processing {file}: {ex.Message}");
-                    }
-                }
-            }
+       
         }
     }
-}
+
 
